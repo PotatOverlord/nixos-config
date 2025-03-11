@@ -1,0 +1,20 @@
+{ inputs, config, lib, pkgs, userSettings, systemSettings, ... }:
+
+{
+  imports = [
+    ../../app/terminal/alacritty.nix
+  ]
+
+#  gtk.cursorTheme = {
+#    package = pkgs.foo.cursor;
+#    name = if (config.stylix.polarity == "light") then "foo_light" else "foo_dark" ; 
+#  };
+
+  wayland.windowManager.hyprland = {
+    enable = true;
+    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+    plugins = [  ];
+    settings = {  };
+    extraConfig = ''
+  }
+}

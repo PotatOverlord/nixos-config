@@ -90,7 +90,6 @@ in
 {
 
   home.packages = [ pkgs.qutebrowser
-                    (pkgs.callPackage ./qute-containers.nix { dmenuCmd = "fuzzel -d"; })
                   ];
   home.sessionVariables = { DEFAULT_BROWSER = "${pkgs.qutebrowser}/bin/qutebrowser"; };
   xdg.mimeApps.defaultApplications = {
@@ -100,8 +99,6 @@ in
   "x-scheme-handler/about" = "org.qutebrowser.qutebrowser.desktop";
   "x-scheme-handler/unknown" = "org.qutebrowser.qutebrowser.desktop";
   };
-  home.file.".config/qutebrowser/userscripts/container-open".source = "${(pkgs.callPackage ./qute-containers.nix { dmenuCmd = "fuzzel -d"; })}/bin/container-open";
-  home.file.".config/qutebrowser/userscripts/containers_config".source = "${(pkgs.callPackage ./qute-containers.nix { dmenuCmd = "fuzzel -d"; })}/bin/containers_config";
 
   programs.qutebrowser.enable = true;
   programs.qutebrowser.extraConfig = ''
@@ -350,24 +347,7 @@ c.fonts.web.family.fantasy = font
 c.fonts.web.family.cursive = font
   '';
 
-  home.file.".config/qutebrowser/containers".text = ''
-Teaching
-Tech
-Gamedev
-Bard
-  '';
-
   home.file.".config/qutebrowser/qute-home.html".text = generateHomepage "Default" userSettings.font config;
   home.file.".config/qutebrowser/logo.png".source = ./qutebrowser-logo.png;
-  home.file.".browser/Teaching/config/qute-home.html".text = generateHomepage "Teaching" userSettings.font config;
-  home.file.".browser/Teaching/config/logo.png".source = ./qutebrowser-logo.png;
-  home.file.".browser/Tech/config/qute-home.html".text = generateHomepage "Tech" userSettings.font config;
-  home.file.".browser/Tech/config/logo.png".source = ./qutebrowser-logo.png;
-  home.file.".browser/Gaming/config/qute-home.html".text = generateHomepage "Gaming" userSettings.font config;
-  home.file.".browser/Gaming/config/logo.png".source = ./qutebrowser-logo.png;
-  home.file.".browser/Gamedev/config/qute-home.html".text = generateHomepage "Gamedev" userSettings.font config;
-  home.file.".browser/Gamedev/config/logo.png".source = ./qutebrowser-logo.png;
-  home.file.".browser/Bard/config/qute-home.html".text = generateHomepage "Bard" userSettings.font config;
-  home.file.".browser/Bard/config/logo.png".source = ./qutebrowser-logo.png;
 
 }

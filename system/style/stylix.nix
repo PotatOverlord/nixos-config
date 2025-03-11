@@ -3,7 +3,6 @@
 let
   themePath = "../../../themes/"+userSettings.theme+"/"+userSettings.theme+".yaml";
   themePolarity = lib.removeSuffix "\n" (builtins.readFile (./. + "../../../themes"+("/"+userSettings.theme)+"/polarity.txt"));
-  myLightDMTheme = if themePolarity == "light" then "Adwaita" else "Adwaita-dark";
   backgroundUrl = builtins.readFile (./. + "../../../themes"+("/"+userSettings.theme)+"/backgroundurl.txt");
   backgroundSha256 = builtins.readFile (./. + "../../../themes/"+("/"+userSettings.theme)+"/backgroundsha256.txt");
 in
@@ -35,11 +34,6 @@ in
       package = pkgs.noto-fonts-emoji-blob-bin;
     };
   };
-
-  stylix.targets.lightdm.enable = true;
-  services.xserver.displayManager.lightdm = {
-      greeters.slick.enable = true;
-      greeters.slick.theme.name = myLightDMTheme;
   };
   stylix.targets.console.enable = true;
 

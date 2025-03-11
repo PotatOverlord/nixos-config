@@ -3,8 +3,8 @@
 {
   # Enable incoming ssh
   services.openssh = {
-    enable = true;
     openFirewall = true;
+    enable = true;
     settings = {
       PasswordAuthentication = false;
       PermitRootLogin = "no";

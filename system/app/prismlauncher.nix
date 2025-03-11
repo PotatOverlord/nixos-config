@@ -1,5 +1,5 @@
 { pkgs, ... }:
 
 {
-  environment.systemPackages = [ pkgs.prismlauncher ];
+  enviroment.systemPackages = [ pks.prismlauncher ];
 }

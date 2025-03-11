@@ -4,12 +4,8 @@ let
   # My shell aliases
   myAliases = {
     ls = "eza --icons -l -T -L=1";
-    cat = "bat";
-    htop = "btm";
-    fd = "fd -Lu";
     w3m = "w3m -no-cookie -v";
-    neofetch = "disfetch";
-    fetch = "disfetch";
+    neofetch = "hyfetch";
     gitfetch = "onefetch";
     "," = "comma";
   };
@@ -40,11 +36,7 @@ in
   home.packages = with pkgs; [
     disfetch lolcat cowsay onefetch
     gnugrep gnused
-    bat eza bottom fd bc
-    direnv nix-direnv
+    eza bc
   ];
 
-  programs.direnv.enable = true;
-  programs.direnv.enableZshIntegration = true;
-  programs.direnv.nix-direnv.enable = true;
 }
