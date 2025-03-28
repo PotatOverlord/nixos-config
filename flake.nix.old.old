@@ -24,24 +24,8 @@
         fontPkg = pkgs.intel-one-mono;
         editor = "vim";
       };
-      
-      pkgs-stable = import inputs.nixpkgs-stable {
-        system = systemSettings.system;
-        config = {
-          allowUnfree = true;
-          allowUnfreePredicate = (_: true);
-        };
-      };
 
-      pkgs-unstable = import inputs.nixpkgs-unstable {
-        system = systemSettings.system;
-        config = {
-          allowUnfree = true;
-          allowUnfreePredicate = (_: true);
-        };
-      };
-
-      pkgs = pkgs-unstable;
+      pkgs = nixpkgs.legacyPackages.${systemSettings.system};
       #lib = nixpkgs.lib;
     in
     {
@@ -70,15 +54,13 @@
             inherit systemSettings;
             inherit userSettings;
             inherit inputs;
-            inherit pkgs-stable;
-            inherit pkgs;
           };
         };
       };
     };
 
   inputs = {
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
 
     home-manager-unstable = {

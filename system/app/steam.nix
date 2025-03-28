@@ -1,7 +1,8 @@
 { pkgs, ... }:
 
 {
+  nixpkgs.config.allowUnfree = true;
   hardware.opengl.driSupport32Bit = true;
   programs.steam.enable = true;
-  enviroment.systemPackages = [ pks.steam ];
+  #environment.systemPackages = [ pkgs.steam ];
 }

@@ -1,190 +1,125 @@
 # Edit this configuration file to define what should be installed on
-# your system. Help is available in the configuration.nix(5) man page, on
-# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
+# your system.  Help is available in the configuration.nix(5) man page
+# and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, lib, ... }:
-
+{ pkgs, lib, systemSettings, userSettings, ... }:
 {
+
+  # I'm sorry Stallman-taichou
+  nixpkgs.config.allowUnfree = true;
+
   imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      inputs.home-manager.nixosModules.default
+    [ ./hardware-configuration.nix
+      ../../system/hardware/systemd.nix # systemd config
+      ../../system/hardware/power.nix # Power management
+      ../../system/hardware/time.nix # Network time sync
+      ../../system/hardware/opengl.nix
+      ../../system/hardware/printing.nix
+      ../../system/hardware/bluetooth.nix
+      ../../system/wm/hyprland.nix
+      #../../system/app/flatpak.nix
+      #../../system/app/virtualization.nix
+      ( import ../../system/app/docker.nix {storageDriver = null; inherit pkgs userSettings lib;} )
+      ../../system/security/gpg.nix
+      ../../system/security/firewall.nix
+      #../../system/security/openvpn.nix
+      ../../system/security/automount.nix
+      ../../system/style/stylix.nix
+      #../../system/app/gamemode.nix
+      ../../system/app/steam.nix
+      ../../system/app/prismlauncher.nix
     ];
 
-  # Use the systemd-boot EFI boot loader.
+  # Fix nix path
+  #nix.nixPath = [ "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
+  #                "nixos-config=$HOME/dotfiles/system/configuration.nix"
+  #                "/nix/var/nix/profiles/per-user/root/channels"
+  #              ];
+
+  # Ensure nix flakes are enabled
+  nix.extraOptions = ''
+    experimental-features = nix-command flakes
+  '';
+ 
+
+  # wheel group gets trusted access to nix daemon
+  nix.settings.trusted-users = [ "@wheel" ];
+
+ # Kernel modules
+  boot.kernelModules = [ "i2c-dev" "i2c-piix4" "cpufreq_powersave" ];
+
+  # Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.efi.efiSysMountPoint = systemSettings.bootMountPath;
 
-  networking.hostName = "cheese"; # Define your hostname.
-  # Pick only one of the below networking options.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
+  # Networking
+  networking.hostName = systemSettings.hostname; # Define your hostname.
+  networking.networkmanager.enable = true; # Use networkmanager
 
-  # Set your time zone.
-  time.timeZone = "Europe/London";
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Select internationalisation properties.
-  i18n.defaultLocale = "en_GB.UTF-8";
-  console = {
-    font = "Lat2-Terminus16";
-    keyMap = "uk";
-  #   useXkbConfig = true; # use xkb.options in tty.
+  # Timezone and locale
+  time.timeZone = systemSettings.timezone; # time zone
+  i18n.defaultLocale = systemSettings.locale;
+  i18n.extraLocaleSettings = {
+    LC_ADDRESS = systemSettings.locale;
+    LC_IDENTIFICATION = systemSettings.locale;
+    LC_MEASUREMENT = systemSettings.locale;
+    LC_MONETARY = systemSettings.locale;
+    LC_NAME = systemSettings.locale;
+    LC_NUMERIC = systemSettings.locale;
+    LC_PAPER = systemSettings.locale;
+    LC_TELEPHONE = systemSettings.locale;
+    LC_TIME = systemSettings.locale;
   };
 
-  # Configure keymap in X11
-  # services.xserver.xkb.layout = "us";
-  # services.xserver.xkb.options = "eurosign:e,caps:escape";
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-
-  # Enable sound.
-  # hardware.pulseaudio.enable = true;
-  # OR
-  services.pipewire = {
-    enable = true;
-    pulse.enable = true;
-  };
-
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.libinput.enable = true;
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.tater = {
+  # User account
+  users.users.${userSettings.username} = {
     isNormalUser = true;
-    description = "Potato Overlord";
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+    description = userSettings.name;
+    extraGroups = [ "networkmanager" "wheel" "input" "dialout" "video" "render" ];
+    packages = [];
+    uid = 1000;
   };
 
-  home-manager = {
-    extraSpecialArgs = {inherit inputs;};
-    users = {
-      "tater" = import ./home.nix;
-    };
-  };
-
-  programs.firefox.enable = true;
-  programs.nano.enable = false;
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
+  # System packages
   environment.systemPackages = with pkgs; [
     vim
     wget
-    greetd.tuigreet
-    kitty
-    vesktop
-    mpd
-    ncmpcpp
-    rofi
-    cmatrix
-    cbonsai
-    keepassxc
-    btop
-    waybar
+    zsh
     git
-    pavucontrol
-    cataclysm-dda-git
-    ranger
-    hyfetch
-    ani-cli
-    mpv
-    p7zip
-    wl-clipboard
-    grim
-    slurp
-    wf-recorder
-    killall
-    python314
-    eog
-    libgcc
-    halloy
+    cryptsetup
+    home-manager
+    wpa_supplicant
+    (pkgs.writeScriptBin "comma" ''
+      if [ "$#" = 0 ]; then
+        echo "usage: comma PKGNAME... [EXECUTABLE]";
+      elif [ "$#" = 1 ]; then
+        nix-shell -p $1 --run $1;
+      elif [ "$#" = 2 ]; then
+        nix-shell -p $1 --run $2;
+      else
+        echo "error: too many arguments";
+        echo "usage: comma PKGNAME... [EXECUTABLE]";
+      fi
+    '')
   ];
 
-  programs.hyprland.enable = true;
+  # I use zsh btw
+  environment.shells = with pkgs; [ zsh ];
+  users.defaultUserShell = pkgs.zsh;
+  programs.zsh.enable = true;
 
-  services.greetd = {
+  fonts.fontDir.enable = true;
+
+  xdg.portal = {
     enable = true;
-    settings = {
-      default_session = {
-        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd Hyprland";
-        user = "tater";
-      };
-    };
+    extraPortals = [
+      pkgs.xdg-desktop-portal
+      pkgs.xdg-desktop-portal-gtk
+    ];
   };
 
-  systemd.services.greetd.serviceConfig = {
-    Type = "idle";
-    StandardInput = "tty";
-    StandardOutput = "tty";
-    StandardError = "journal";
-    TTYReset = true;
-    TTYHangup = true;
-    TTYVTDisallocate = true;
-  };
-
-  programs.steam = {
-    enable = true;
-    remotePlay.openFirewall = true;
-    dedicatedServer.openFirewall = true;
-    localNetworkGameTransfers.openFirewall = true;
-  };
-
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-    "steam"
-    "steam-original"
-    "steam-unwrapped"
-    "steam-run"
-  ];
-
-  nix.settings.experimental-features = [ "nix-command" "flakes"];
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
-  # Copy the NixOS configuration file and link it from the resulting system
-  # (/run/current-system/configuration.nix). This is useful in case you
-  # accidentally delete configuration.nix.
-  # system.copySystemConfiguration = true;
-
-  # This option defines the first version of NixOS you have installed on this particular machine,
-  # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
-  #
-  # Most users should NEVER change this value after the initial install, for any reason,
-  # even if you've upgraded your system to a new NixOS release.
-  #
-  # This value does NOT affect the Nixpkgs version your packages and OS are pulled from,
-  # so changing it will NOT upgrade your system - see https://nixos.org/manual/nixos/stable/#sec-upgrading for how
-  # to actually do that.
-  #
-  # This value being lower than the current NixOS release does NOT mean your system is
-  # out of date, out of support, or vulnerable.
-  #
-  # Do NOT change this value unless you have manually inspected all the changes it would make to your configuration,
-  # and migrated your data accordingly.
-  #
-  # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
-  system.stateVersion = "24.11"; # Did you read the comment?
+  # It is ok to leave this unchanged for compatibility purposes
+  system.stateVersion = "24.11";
 
 }
-

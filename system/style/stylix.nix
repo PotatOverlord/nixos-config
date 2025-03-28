@@ -34,7 +34,6 @@ in
       package = pkgs.noto-fonts-emoji-blob-bin;
     };
   };
-  };
   stylix.targets.console.enable = true;
 
   environment.sessionVariables = {
