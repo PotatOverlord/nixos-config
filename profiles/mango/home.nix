@@ -13,7 +13,7 @@
               ../../user/shell/sh.nix # My zsh and bash config
               ../../user/shell/cli-collection.nix # Useful CLI apps
               #../../user/app/doom-emacs/doom.nix # My doom emacs config
-              #../../user/app/nvim/nvim.nix # My doom emacs config
+              ../../user/app/nvim/nvim.nix 
               #../../user/app/emacsng # Me experimenting with emacsng and a vanilla config
               ../../user/app/ranger/ranger.nix # My ranger file manager config
               ../../user/app/git.nix # My git config
@@ -22,8 +22,9 @@
               #../../user/app/virtualization/virtualization.nix # Virtual machines
               #../../user/app/flatpak/flatpak.nix # Flatpaks
               ../../user/app/games/steam.nix
+              ../../user/app/games/emulators.nix
               ../../user/style/stylix.nix # Styling and themes for my apps
-              #../../user/lang/cc/cc.nix # C and C++ tools
+              ../../user/lang/cc/cc.nix # C and C++ tools
               #../../user/lang/godot/godot.nix # Game development
               ../../user/hardware/bluetooth.nix # Bluetooth
             ];
@@ -42,7 +43,6 @@
     # Office
     libreoffice-fresh
     mate.atril
-    openboard
     adwaita-icon-theme
     shared-mime-info
     glib
@@ -149,13 +149,16 @@
     tenacity
 
     # Various dev packages
-    remmina
     sshfs
     texinfo
     libffi zlib
     nodePackages.ungit
     ventoy
     kdePackages.kdenlive
+
+    # Dunno what to categorise as 
+    vesktop
+
   ]);
 
   home.file.".local/share/pixmaps/nixos-snowflake-stylix.svg".source =

@@ -5,6 +5,8 @@
     # Command Line
     hyfetch lolcat cowsay
     starfetch
+    ani-cli
+    btop
     cava
     killall
     libnotify

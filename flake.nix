@@ -1,12 +1,12 @@
 {
-  description = "Nixos config flake";
+  description = "Every day I get closer to eating my computer and never having to look at an error ever again";
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let 
       systemSettings = {
         system = "x86_64-linux";
         hostname = "cheese";
-        profile = "default";
+        profile = "mango";
         timezone = "Europe/London";
         locale = "en_GB.UTF-8";
         bootMountPath = "/boot";
@@ -22,7 +22,7 @@
         term = "alacritty";
         font = "Intel One Mono";
         fontPkg = pkgs.intel-one-mono;
-        editor = "vim";
+        editor = "nvim";
       };
       
       pkgs-stable = import inputs.nixpkgs-stable {
@@ -71,6 +71,7 @@
             inherit userSettings;
             inherit inputs;
             inherit pkgs-stable;
+            inherit pkgs-unstable;
             inherit pkgs;
           };
         };

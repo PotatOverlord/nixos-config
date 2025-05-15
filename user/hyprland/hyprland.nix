@@ -24,10 +24,6 @@ in
       exec-once = hyprctl setcursor '' + config.gtk.cursorTheme.name + " " + builtins.toString config.gtk.cursorTheme.size + ''
 
     monitor=,highres,auto,1
-    $terminal = '' + userSettings.term + ''
-    $fileManager = ranger
-    $menu = rofi -show drun
-    $browser = firefox
     exec-once = nm-applet && blueman-applet
     exec-once = waybar
     exec-once = ydotoold
@@ -124,11 +120,11 @@ in
     }
 
     # https://wiki.hyprland.org/Configuring/Variables/#misc
-    misc {
-	  force_default_wallpaper = 0 # Set to 0 or 1 to disable the anime mascot wallpapers
-	  disable_hyprland_logo = true # If true disables the random hyprland logo / anime girl background. :(
-      font_family = '' + userSettings.font + ''
-    }
+#    misc {
+#	  force_default_wallpaper = 0 # Set to 0 or 1 to disable the anime mascot wallpapers
+#	  disable_hyprland_logo = true # If true disables the random hyprland logo / anime girl background. :(
+#      font_family = '' + userSettings.font + ''
+#    }
 
 
     #############
@@ -169,22 +165,19 @@ in
     ### KEYBINDINGS ###
     ###################
 
-    # See https://wiki.hyprland.org/Configuring/Keywords/
-    $mainMod = SUPER # Sets "Windows" key as main modifier
-
     # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
-    bind = $mainMod, Q, exec, $terminal
-    bind = $mainMod, C, killactive,
-    bind = $mainMod, M, exit,
-    bind = $mainMod, E, exec, $fileManager
-    bind = $mainMod, V, togglefloating,
-    bind = $mainMod, R, exec, $menu
-    #bind = $mainMod, P, pseudo, # dwindle
-    bind = $mainMod, J, togglesplit, # dwindle
-    bind = $mainMod, W, exec, $browser
-    bind = $mainMod, A, exec, vesktop
-    bind = $mainMod, F, fullscreen
-    bind = $mainMod, P, pin
+    bind = SUPER, Q, exec, '' + userSettings.term + '' 
+    bind = SUPER, C, killactive,
+    bind = SUPER, M, exit,
+    bind = SUPER, E, exec, ranger
+    bind = SUPER, V, togglefloating,
+    bind = SUPER, R, exec, rofi -show drun
+    #bind = SUPER, P, pseudo, # dwindle
+    bind = SUPER, J, togglesplit, # dwindle
+    bind = SUPER, W, exec, '' + userSettings.browser + ''
+    bind = SUPER, A, exec, vesktop
+    bind = SUPER, F, fullscreen
+    bind = SUPER, P, pin
 
     # Screenshot stuff 
     # shift - slurp  ctrl - clipboard  alt - screenrec  SUPER - end screenrec
@@ -196,48 +189,48 @@ in
     bind = ALT CTRL, Print, exec, wf-recorder -y --audio -f /tmp/fuck-you.mkv && wl-copy < /tmp/fuck-you.mkv  
     bind = ALT SHIFT, Print, exec, wf-recorder -g "$(slurp)" --audio --file=$HOME/screenshots/$(date +"%y-%m-%d_%H-%M-%S")_screenrec.mkv 
     bind = ALT CTRL SHIFT, Print, exec, wf-recorder -y -g "$(slurp)"--audio -f /tmp/fuck-you.mkv && wl-copy < /tmp/fuck-you.mkv 
-    bind = $mainMod, Print, exec, killall wf-recorder 
+    bind = SUPER, Print, exec, killall wf-recorder 
 
-    bind = $mainMod, left, movefocus, l
-    bind = $mainMod, right, movefocus, r
-    bind = $mainMod, up, movefocus, u
-    bind = $mainMod, down, movefocus, d
+    bind = SUPER, left, movefocus, l
+    bind = SUPER, right, movefocus, r
+    bind = SUPER, up, movefocus, u
+    bind = SUPER, down, movefocus, d
 
     # Switch workspaces with mainMod + [0-9]
-    bind = $mainMod, 1, workspace, 1
-    bind = $mainMod, 2, workspace, 2
-    bind = $mainMod, 3, workspace, 3
-    bind = $mainMod, 4, workspace, 4
-    bind = $mainMod, 5, workspace, 5
-    bind = $mainMod, 6, workspace, 6
-    bind = $mainMod, 7, workspace, 7
-    bind = $mainMod, 8, workspace, 8
-    bind = $mainMod, 9, workspace, 9
-    bind = $mainMod, 0, workspace, 10
+    bind = SUPER, 1, workspace, 1
+    bind = SUPER, 2, workspace, 2
+    bind = SUPER, 3, workspace, 3
+    bind = SUPER, 4, workspace, 4
+    bind = SUPER, 5, workspace, 5
+    bind = SUPER, 6, workspace, 6
+    bind = SUPER, 7, workspace, 7
+    bind = SUPER, 8, workspace, 8
+    bind = SUPER, 9, workspace, 9
+    bind = SUPER, 0, workspace, 10
 
     # Move active window to a workspace with mainMod + SHIFT + [0-9]
-    bind = $mainMod SHIFT, 1, movetoworkspace, 1
-    bind = $mainMod SHIFT, 2, movetoworkspace, 2
-    bind = $mainMod SHIFT, 3, movetoworkspace, 3
-    bind = $mainMod SHIFT, 4, movetoworkspace, 4
-    bind = $mainMod SHIFT, 5, movetoworkspace, 5
-    bind = $mainMod SHIFT, 6, movetoworkspace, 6
-    bind = $mainMod SHIFT, 7, movetoworkspace, 7
-    bind = $mainMod SHIFT, 8, movetoworkspace, 8
-    bind = $mainMod SHIFT, 9, movetoworkspace, 9
-    bind = $mainMod SHIFT, 0, movetoworkspace, 10
+    bind = SUPER SHIFT, 1, movetoworkspace, 1
+    bind = SUPER SHIFT, 2, movetoworkspace, 2
+    bind = SUPER SHIFT, 3, movetoworkspace, 3
+    bind = SUPER SHIFT, 4, movetoworkspace, 4
+    bind = SUPER SHIFT, 5, movetoworkspace, 5
+    bind = SUPER SHIFT, 6, movetoworkspace, 6
+    bind = SUPER SHIFT, 7, movetoworkspace, 7
+    bind = SUPER SHIFT, 8, movetoworkspace, 8
+    bind = SUPER SHIFT, 9, movetoworkspace, 9
+    bind = SUPER SHIFT, 0, movetoworkspace, 10
 
     # Example special workspace (scratchpad)
-    bind = $mainMod, S, togglespecialworkspace, magic
-    bind = $mainMod SHIFT, S, movetoworkspace, special:magic
+    bind = SUPER, S, togglespecialworkspace, magic
+    bind = SUPER SHIFT, S, movetoworkspace, special:magic
 
     # Scroll through existing workspaces with mainMod + scroll
-    #bind = $mainMod, mouse_down, workspace, e+1
-    #bind = $mainMod, mouse_up, workspace, e-1
+    #bind = SUPER, mouse_down, workspace, e+1
+    #bind = SUPER, mouse_up, workspace, e-1
 
     # Move/resize windows with mainMod + LMB/RMB and dragging
-    bindm = $mainMod, mouse:272, movewindow
-    bindm = $mainMod, mouse:273, resizewindow
+    bindm = SUPER, mouse:272, movewindow
+    bindm = SUPER, mouse:273, resizewindow
 
     # Laptop multimedia keys for volume and LCD brightness
     bindel = ,XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
