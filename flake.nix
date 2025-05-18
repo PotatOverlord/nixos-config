@@ -41,7 +41,7 @@
         };
       };
 
-      pkgs = pkgs-unstable;
+      pkgs = nixpkgs.legacyPackages.${systemSettings.system};
       #lib = nixpkgs.lib;
     in
     {

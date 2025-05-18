@@ -17,87 +17,223 @@ in
   enable = true;
   package = inputs.hyprland.packages.${pkgs.system}.hyprland;
   plugins = [ ];
-  settings = { };
-  extraConfig = ''
+  settings = {
+    bind = [
+    # Generic binds
+    "SUPER, Q, exec, ${userSettings.term}"
+    "SUPER, C, killactive"
+    "SUPER, E, exec, ranger"
+    "SUPER, V, togglefloating"
+    "SUPER, R, exec, rofi -show drun"
+    "SUPER, J, togglesplit"
+    "SUPER, W, exec,${userSettings.browser}"
+    "SUPER, A, exec, vesktop"
+    "SUPER, F, fullscreen"
+    "SUPER, P, pin"
 
-      exec-once = dbus-update-activation-environment --systemd DISPLAY XAUTHORITY WAYLAND_DISPLAY XDG_SESSION_DESKTOP=Hyprland XDG_CURRENT_DESKTOP=Hyprland XDG_SESSION_TYPE=wayland
-      exec-once = hyprctl setcursor '' + config.gtk.cursorTheme.name + " " + builtins.toString config.gtk.cursorTheme.size + ''
+    # Screencap stuff TODO: put in app name to file
+    # shift - slurp  ctrl - clipboard  alt - screenrec  SUPER - end screenrec
+    ", Print, exec, grim $HOME/screenshots/$(date +''%y-%m-%d_%H-%M-%S'')_screenshot.png"
+    "SHIFT, Print, exec, grim -g ''$(slurp)'' $HOME/screenshots/$(date +''%y-%m-%d_%H-%M-%S'')_screenshot.png"
+    "CTRL, Print, exec, grim - | wl-copy"
+    "CTRL SHIFT, Print, exec, grim -g ''$(slurp)'' - | wl-copy"
+    "ALT, Print, exec, wf-recorder --audio --file=$HOME/screenshots/$(date +''%y-%m-%d_%H-%M-%S'')_screenrec.mkv "
+    "ALT CTRL, Print, exec, wf-recorder -y --audio -f /tmp/fuck-you.mkv && wl-copy < /tmp/fuck-you.mkv "
+    "ALT SHIFT, Print, exec, wf-recorder -g ''$(slurp)'' --audio --file=$HOME/screenshots/$(date +''%y-%m-%d_%H-%M-%S'')_screenrec.mkv "
+    "ALT CTRL SHIFT, Print, exec, wf-recorder -y -g ''$(slurp)''--audio -f /tmp/fuck-you.mkv && wl-copy < /tmp/fuck-you.mkv"
+    "SUPER, Print, exec, killall wf-recorder"
 
-    monitor=,highres,auto,1
-    exec-once = nm-applet && blueman-applet
-    exec-once = waybar
-    exec-once = ydotoold
-    exec-once = hyprpaper
-    env = XCURSOR_SIZE,12
-    env = HYPRCURSOR_SIZE,12
-    general {
-	gaps_in = 5
-	gaps_out = 20
+    "SUPER, left, movefocus, l"
+    "SUPER, right, movefocus, r"
+    "SUPER, up, movefocus, u"
+    "SUPER, down, movefocus, d"
 
-	border_size = 2
+    # Example special workspace (scratchpad)
+    "SUPER, S, togglespecialworkspace, magic"
+    "SUPER SHIFT, S, movetoworkspace, special:magic"
+    ]
+    ++ (
+      # Workspaces
+      builtins.concatLists (builtins.genList (i:
+        let ws = i + 1;
+	in [
+          "SUPER, code:1${toString i}, workspace, ${toString ws}"
+          "SUPER SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
+	]
+      )
+      9)
+    );
+    
+    bindm = [
+    # Move/resize windows with mainMod + LMB/RMB and dragging
+    "SUPER, mouse:272, movewindow"
+    "SUPER, mouse:273, resizewindow"
+    ];
 
-	# https://wiki.hyprland.org/Configuring/Variables/#variable-types for info about colors
-	col.active_border = 0xff'' + config.lib.stylix.colors.base08 + " " + ''0xff'' + config.lib.stylix.colors.base09 + " " + ''0xff'' + config.lib.stylix.colors.base0A + " " + ''0xff'' + config.lib.stylix.colors.base0B + " " + ''0xff'' + config.lib.stylix.colors.base0C + " " + ''0xff'' + config.lib.stylix.colors.base0D + " " + ''0xff'' + config.lib.stylix.colors.base0E + " " + ''0xff'' + config.lib.stylix.colors.base0F + " " + ''270deg
-	col.inactive_border = 0xaa'' + config.lib.stylix.colors.base02 + '' 
+    bindel = [
+    # Laptop multimedia keys for volume and LCD brightness
+    ",XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
+    ",XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+    ",XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+    ",XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+    ",XF86MonBrightnessUp, exec, brightnessctl s 10%+"
+    ",XF86MonBrightnessDown, exec, brightnessctl s 10%-"
+    ];
 
-	# Set to true enable resizing windows by clicking and dragging on borders and gaps
-	resize_on_border = false
+    bindl = [
+    # Requires playerctl
+    ",XF86AudioNext, exec, playerctl next"
+    ",XF86AudioPause, exec, playerctl play-pause"
+    ",XF86AudioPlay, exec, playerctl play-pause"
+    ",XF86AudioPrev, exec, playerctl previous"
+    ];
 
-	# Please see https://wiki.hyprland.org/Configuring/Tearing/ before you turn this on
-	allow_tearing = false
+    monitor=",highres,auto,1";
+    
+    exec-once = [
+    "dbus-update-activation-environment --systemd DISPLAY XAUTHORITY WAYLAND_DISPLAY XDG_SESSION_DESKTOP=Hyprland XDG_CURRENT_DESKTOP=Hyprland XDG_SESSION_TYPE=wayland"
+    "hyprctl setcursor ${config.gtk.cursorTheme.name} ${toString config.gtk.cursorTheme.size}"
 
-	layout = dwindle
-    }
+    "nm-applet && blueman-applet"
+    "waybar"
+    "ydotoold"
+    "hyprpaper"
+    ];
 
-    # https://wiki.hyprland.org/Configuring/Variables/#decoration
+    env =[
+    "XCURSOR_SIZE,12"
+    "HYPRCURSOR_SIZE,12"
+    ];
 
-       decoration {
-         rounding = 8
-         dim_special = 0.0
-         blur {
-           enabled = true
-           size = 5
-           passes = 2
-           ignore_opacity = true
-           contrast = 1.17
-           brightness = '' + (if (config.stylix.polarity == "dark") then "0.8" else "1.25") + ''
+    general = {
+      gaps_in = 5;
+      gaps_out = 20;
 
-           xray = true
-           special = true
-           popups = true
-         }
-       }
+      border_size = 2;
+
+      # https://wiki.hyprland.org/Configuring/Variables/#variable-types for info about colors
+      "col.active_border" = "0xff${config.lib.stylix.colors.base08} 0xff${config.lib.stylix.colors.base09} 0xff${config.lib.stylix.colors.base0A} 0xff${config.lib.stylix.colors.base0B} 0xff${config.lib.stylix.colors.base0C} 0xff${config.lib.stylix.colors.base0D} 0xff${config.lib.stylix.colors.base0E} 0xff${config.lib.stylix.colors.base0F} 270deg";
+      "col.inactive_border" = "0xaa${config.lib.stylix.colors.base02}";
+
+      # Set to true enable resizing windows by clicking and dragging on borders and gaps
+      resize_on_border = false;
+
+      # Please see https://wiki.hyprland.org/Configuring/Tearing/ before you turn this on
+      allow_tearing = false;
+
+      layout = "dwindle";
+    };
+
+    decoration = {
+      rounding = 8;
+      dim_special = 0.0;
+      blur = {
+        enabled = true;
+        size = 5;
+        passes = 2;
+        ignore_opacity = true;
+        contrast = 1.17;
+        brightness = (if (config.stylix.polarity == "dark") then "0.8" else "1.25");
+
+        xray = true;
+        special = true;
+        popups = true;
+      };
+    };
 
     # https://wiki.hyprland.org/Configuring/Variables/#animations
-    animations {
-	enabled = yes, please :)
+    animations = {
+      enabled = "yes, please :)";
 
 	# Default animations, see https://wiki.hyprland.org/Configuring/Animations/ for more
 
-	bezier = easeOutQuint,0.23,1,0.32,1
-	bezier = easeInOutCubic,0.65,0.05,0.36,1
-	bezier = linear,0,0,1,1
-	bezier = almostLinear,0.5,0.5,0.75,1.0
-	bezier = quick,0.15,0,0.1,1
+      bezier = [
+      "easeOutQuint,0.23,1,0.32,1"
+      "easeInOutCubic,0.65,0.05,0.36,1"
+      "linear,0,0,1,1"
+      "almostLinear,0.5,0.5,0.75,1.0"
+      "quick,0.15,0,0.1,1"
+      ];
 
-	animation = global, 1, 10, default
-	animation = border, 1, 5.39, easeOutQuint
-	animation = windows, 1, 4.79, easeOutQuint
-	animation = windowsIn, 1, 4.1, easeOutQuint, popin 87%
-	animation = windowsOut, 1, 1.49, linear, popin 87%
-	animation = fadeIn, 1, 1.73, almostLinear
-	animation = fadeOut, 1, 1.46, almostLinear
-	animation = fade, 1, 3.03, quick
-	animation = layers, 1, 3.81, easeOutQuint
-	animation = layersIn, 1, 4, easeOutQuint, fade
-	animation = layersOut, 1, 1.5, linear, fade
-	animation = fadeLayersIn, 1, 1.79, almostLinear
-	animation = fadeLayersOut, 1, 1.39, almostLinear
-	animation = workspaces, 1, 1.94, almostLinear, fade
-	animation = workspacesIn, 1, 1.21, almostLinear, fade
-	animation = workspacesOut, 1, 1.94, almostLinear, fade
-    }
+      animation = [
+      "global, 1, 10, default"
+      "border, 1, 5.39, easeOutQuint"
+      "windows, 1, 4.79, easeOutQuint"
+      "windowsIn, 1, 4.1, easeOutQuint, popin 87%"
+      "windowsOut, 1, 1.49, linear, popin 87%"
+      "fadeIn, 1, 1.73, almostLinear"
+      "fadeOut, 1, 1.46, almostLinear"
+      "fade, 1, 3.03, quick"
+      "layers, 1, 3.81, easeOutQuint"
+      "layersIn, 1, 4, easeOutQuint, fade"
+      "layersOut, 1, 1.5, linear, fade"
+      "fadeLayersIn, 1, 1.79, almostLinear"
+      "fadeLayersOut, 1, 1.39, almostLinear"
+      "workspaces, 1, 1.94, almostLinear, fade"
+      "workspacesIn, 1, 1.21, almostLinear, fade"
+      "workspacesOut, 1, 1.94, almostLinear, fade"
+      ];
+    };
 
+    # See https://wiki.hyprland.org/Configuring/Dwindle-Layout/ for more
+    dwindle = {
+      pseudotile = true; # Master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
+      preserve_split = true; # You probably want this
+    };
+
+    # See https://wiki.hyprland.org/Configuring/Master-Layout/ for more
+    master = {
+      new_status = "master";
+    };
+
+    # https://wiki.hyprland.org/Configuring/Variables/#input
+    input = {
+      kb_layout = "gb";
+      #kb_variant =
+      #kb_model =
+      #kb_options =
+      #kb_rules =
+
+      follow_mouse = 1;
+
+      sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
+
+      touchpad = {
+          natural_scroll = false;
+      };
+    };
+
+    # https://wiki.hyprland.org/Configuring/Variables/#gestures
+    gestures = {
+      workspace_swipe = false;
+    };
+
+    #device = {
+    #};
+
+
+    windowrulev2 = [ 
+
+    # Ignore maximize requests from apps. You'll probably like this.
+    "suppressevent maximize, class:.*"
+
+    # Fix some dragging issues with XWayland
+    "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"
+    ];
+ 
+    # https://wiki.hyprland.org/Configuring/Variables/#misc
+    misc = {
+      font_family = userSettings.font;
+      disable_hyprland_logo = true;
+      force_default_wallpaper = 0;
+    };
+
+    xwayland = {
+      force_zero_scaling = true;
+    };
+ 
+  };
+  extraConfig = ''
     # Ref https://wiki.hyprland.org/Configuring/Workspace-Rules/
     # "Smart gaps" / "No gaps when only"
     # uncomment all if you wish to use that.
@@ -108,145 +244,7 @@ in
     # windowrulev2 = bordersize 0, floating:0, onworkspace:f[1]
     # windowrulev2 = rounding 0, floating:0, onworkspace:f[1]
 
-    # See https://wiki.hyprland.org/Configuring/Dwindle-Layout/ for more
-    dwindle {
-	pseudotile = true # Master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
-	preserve_split = true # You probably want this
-    }
-
-    # See https://wiki.hyprland.org/Configuring/Master-Layout/ for more
-    master {
-	new_status = master
-    }
-
-    # https://wiki.hyprland.org/Configuring/Variables/#misc
-#    misc {
-#	  force_default_wallpaper = 0 # Set to 0 or 1 to disable the anime mascot wallpapers
-#	  disable_hyprland_logo = true # If true disables the random hyprland logo / anime girl background. :(
-#      font_family = '' + userSettings.font + ''
-#    }
-
-
-    #############
-    ### INPUT ###
-    #############
-
-    # https://wiki.hyprland.org/Configuring/Variables/#input
-    input {
-	kb_layout = gb 
-	#kb_variant =
-	#kb_model =
-	#kb_options =
-	#kb_rules =
-
-	follow_mouse = 1
-
-	sensitivity = 0 # -1.0 - 1.0, 0 means no modification.
-
-	touchpad {
-	    natural_scroll = false
-	}
-    }
-
-    # https://wiki.hyprland.org/Configuring/Variables/#gestures
-    gestures {
-	workspace_swipe = false
-    }
-
-    # Example per-device config
-    # See https://wiki.hyprland.org/Configuring/Keywords/#per-device-input-configs for more
-    device {
-	name = epic-mouse-v1
-	sensitivity = -0.5
-    }
-
-
-    ###################
-    ### KEYBINDINGS ###
-    ###################
-
-    # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
-    bind = SUPER, Q, exec, '' + userSettings.term + '' 
-    bind = SUPER, C, killactive,
-    bind = SUPER, M, exit,
-    bind = SUPER, E, exec, ranger
-    bind = SUPER, V, togglefloating,
-    bind = SUPER, R, exec, rofi -show drun
-    #bind = SUPER, P, pseudo, # dwindle
-    bind = SUPER, J, togglesplit, # dwindle
-    bind = SUPER, W, exec, '' + userSettings.browser + ''
-    bind = SUPER, A, exec, vesktop
-    bind = SUPER, F, fullscreen
-    bind = SUPER, P, pin
-
-    # Screenshot stuff 
-    # shift - slurp  ctrl - clipboard  alt - screenrec  SUPER - end screenrec
-    bind = , Print, exec, grim $HOME/screenshots/$(date +"%y-%m-%d_%H-%M-%S")_screenshot.png
-    bind = SHIFT, Print, exec, grim -g "$(slurp)" $HOME/screenshots/$(date +"%y-%m-%d_%H-%M-%S")_screenshot.png
-    bind = CTRL, Print, exec, grim - | wl-copy
-    bind = CTRL SHIFT, Print, exec, grim -g "$(slurp)" - | wl-copy
-    bind = ALT, Print, exec, wf-recorder --audio --file=$HOME/screenshots/$(date +"%y-%m-%d_%H-%M-%S")_screenrec.mkv 
-    bind = ALT CTRL, Print, exec, wf-recorder -y --audio -f /tmp/fuck-you.mkv && wl-copy < /tmp/fuck-you.mkv  
-    bind = ALT SHIFT, Print, exec, wf-recorder -g "$(slurp)" --audio --file=$HOME/screenshots/$(date +"%y-%m-%d_%H-%M-%S")_screenrec.mkv 
-    bind = ALT CTRL SHIFT, Print, exec, wf-recorder -y -g "$(slurp)"--audio -f /tmp/fuck-you.mkv && wl-copy < /tmp/fuck-you.mkv 
-    bind = SUPER, Print, exec, killall wf-recorder 
-
-    bind = SUPER, left, movefocus, l
-    bind = SUPER, right, movefocus, r
-    bind = SUPER, up, movefocus, u
-    bind = SUPER, down, movefocus, d
-
-    # Switch workspaces with mainMod + [0-9]
-    bind = SUPER, 1, workspace, 1
-    bind = SUPER, 2, workspace, 2
-    bind = SUPER, 3, workspace, 3
-    bind = SUPER, 4, workspace, 4
-    bind = SUPER, 5, workspace, 5
-    bind = SUPER, 6, workspace, 6
-    bind = SUPER, 7, workspace, 7
-    bind = SUPER, 8, workspace, 8
-    bind = SUPER, 9, workspace, 9
-    bind = SUPER, 0, workspace, 10
-
-    # Move active window to a workspace with mainMod + SHIFT + [0-9]
-    bind = SUPER SHIFT, 1, movetoworkspace, 1
-    bind = SUPER SHIFT, 2, movetoworkspace, 2
-    bind = SUPER SHIFT, 3, movetoworkspace, 3
-    bind = SUPER SHIFT, 4, movetoworkspace, 4
-    bind = SUPER SHIFT, 5, movetoworkspace, 5
-    bind = SUPER SHIFT, 6, movetoworkspace, 6
-    bind = SUPER SHIFT, 7, movetoworkspace, 7
-    bind = SUPER SHIFT, 8, movetoworkspace, 8
-    bind = SUPER SHIFT, 9, movetoworkspace, 9
-    bind = SUPER SHIFT, 0, movetoworkspace, 10
-
-    # Example special workspace (scratchpad)
-    bind = SUPER, S, togglespecialworkspace, magic
-    bind = SUPER SHIFT, S, movetoworkspace, special:magic
-
-    # Scroll through existing workspaces with mainMod + scroll
-    #bind = SUPER, mouse_down, workspace, e+1
-    #bind = SUPER, mouse_up, workspace, e-1
-
-    # Move/resize windows with mainMod + LMB/RMB and dragging
-    bindm = SUPER, mouse:272, movewindow
-    bindm = SUPER, mouse:273, resizewindow
-
-    # Laptop multimedia keys for volume and LCD brightness
-    bindel = ,XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
-    bindel = ,XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
-    bindel = ,XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
-    bindel = ,XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
-    bindel = ,XF86MonBrightnessUp, exec, brightnessctl s 10%+
-    bindel = ,XF86MonBrightnessDown, exec, brightnessctl s 10%-
-
-    # Requires playerctl
-    bindl = , XF86AudioNext, exec, playerctl next
-    bindl = , XF86AudioPause, exec, playerctl play-pause
-    bindl = , XF86AudioPlay, exec, playerctl play-pause
-    bindl = , XF86AudioPrev, exec, playerctl previous
-
-    ##############################
+   ##############################
     ### WINDOWS AND WORKSPACES ###
     ##############################
 
@@ -258,22 +256,9 @@ in
 
     # Example windowrule v2
     # windowrulev2 = float,class:^(kitty)$,title:^(kitty)$
-
-    # Ignore maximize requests from apps. You'll probably like this.
-    windowrulev2 = suppressevent maximize, class:.*
-
-    # Fix some dragging issues with XWayland
-    windowrulev2 = nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0
-
-    # Here be dragons
-
-    xwayland {
-      force_zero_scaling = true
-    }
-
   
     '';
-    xwayland = { enable = true; };
+    xwayland.enable = true;
     systemd.enable = true;
   };
 
@@ -807,7 +792,7 @@ in
       font = userSettings.font + ":size=20";
       dpi-aware = "no";
       show-actions = "yes";
-      terminal = "${pkgs.alacritty}/bin/alacritty";
+      #terminal = pkgs.alacritty}/bin/alacritty";
     };
     colors = {
       background = config.lib.stylix.colors.base00 + "bf";

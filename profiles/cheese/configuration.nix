@@ -12,22 +12,22 @@
     [ ./hardware-configuration.nix
       ../../system/hardware/systemd.nix # systemd config
       ../../system/hardware/power.nix # Power management
-      #../../system/hardware/time.nix # Network time sync
+      ../../system/hardware/time.nix # Network time sync
       ../../system/hardware/opengl.nix
-      #../../system/hardware/printing.nix
-      #../../system/hardware/bluetooth.nix
+      ../../system/hardware/printing.nix
+      ../../system/hardware/bluetooth.nix
       ../../system/wm/hyprland.nix
       #../../system/app/flatpak.nix
       #../../system/app/virtualization.nix
       #( import ../../system/app/docker.nix {storageDriver = null; inherit pkgs userSettings lib;} )
-      #../../system/security/gpg.nix
-      #../../system/security/firewall.nix
+      ../../system/security/gpg.nix
+      ../../system/security/firewall.nix
       #../../system/security/openvpn.nix
-      #../../system/security/automount.nix
-      #../../system/style/stylix.nix
+      ../../system/security/automount.nix
+      ../../system/style/stylix.nix
       #../../system/app/gamemode.nix
       #../../system/app/steam.nix
-      #../../system/app/prismlauncher.nix
+      ../../system/app/prismlauncher.nix
     ];
 
   # Fix nix path
@@ -75,7 +75,7 @@
   # User account
   users.users.${userSettings.username} = {
     isNormalUser = true;
-    description = userSettings.name;
+    description = "tater";
     extraGroups = [ "networkmanager" "wheel" "input" "dialout" "video" "render" ];
     packages = [];
     uid = 1000;

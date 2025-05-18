@@ -13,7 +13,7 @@
               ../../user/shell/sh.nix # My zsh and bash config
               ../../user/shell/cli-collection.nix # Useful CLI apps
               #../../user/app/doom-emacs/doom.nix # My doom emacs config
-              ../../user/app/nvim/nvim.nix 
+              #../../user/app/nvim/nvim.nix 
               #../../user/app/emacsng # Me experimenting with emacsng and a vanilla config
               ../../user/app/ranger/ranger.nix # My ranger file manager config
               ../../user/app/git.nix # My git config
@@ -21,7 +21,7 @@
               (./. + "../../../user/app/browser"+("/"+userSettings.browser)+".nix") # My default browser selected from flake
               #../../user/app/virtualization/virtualization.nix # Virtual machines
               #../../user/app/flatpak/flatpak.nix # Flatpaks
-              ../../user/app/games/steam.nix
+              #../../user/app/games/steam.nix
               ../../user/app/games/emulators.nix
               ../../user/style/stylix.nix # Styling and themes for my apps
               ../../user/lang/cc/cc.nix # C and C++ tools
@@ -111,7 +111,6 @@
     (pkgs-stable.lollypop.override { youtubeSupport = false; })
     mpv
     yt-dlp
-    blender-hip
     libresprite
     /*(pkgs.appimageTools.wrapType2 {
       name = "Cura";
