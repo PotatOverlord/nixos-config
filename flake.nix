@@ -6,7 +6,7 @@
       systemSettings = {
         system = "x86_64-linux";
         hostname = "cheese";
-        profile = "mango";
+        profile = "cheese";
         timezone = "Europe/London";
         locale = "en_GB.UTF-8";
         bootMountPath = "/boot";
@@ -54,6 +54,8 @@
           ];
           specialArgs = {
             inherit pkgs;
+            inherit pkgs-stable;
+            inherit pkgs-unstable;
             inherit systemSettings;
             inherit userSettings;
             inherit inputs;
