@@ -16,7 +16,7 @@
       userSettings = rec {
         username = "tater";
         name = "Potato Overlord";
-        dotfilesDir = "~/nixos-dotfiles/";
+        dotfilesDir = "~/nixos-config/";
         theme = "atelier-sulphurpool";
         browser = "qutebrowser";
         term = "alacritty";

@@ -13,6 +13,7 @@
       ../../system/hardware/systemd.nix # systemd config
       ../../system/hardware/power.nix # Power management
       ../../system/hardware/time.nix # Network time sync
+      ../../system/security/doas.nix
       ../../system/hardware/opengl.nix
       ../../system/hardware/printing.nix
       ../../system/hardware/bluetooth.nix
@@ -22,12 +23,16 @@
       #( import ../../system/app/docker.nix {storageDriver = null; inherit pkgs userSettings lib;} )
       ../../system/security/gpg.nix
       ../../system/security/firewall.nix
-      #../../system/security/openvpn.nix
+      ../../system/security/openvpn.nix
       ../../system/security/automount.nix
       ../../system/style/stylix.nix
-      #../../system/app/gamemode.nix
-      #../../system/app/steam.nix
+      ../../system/app/gamemode.nix
+      ../../system/app/steam.nix
       ../../system/app/prismlauncher.nix
+      ( import ../../system/security/sshd.nix {
+            authorizedKeys = [ "" ];
+            inherit userSettings; })
+ 
     ];
 
   # Fix nix path
@@ -49,9 +54,12 @@
   boot.kernelModules = [ "i2c-dev" "i2c-piix4" "cpufreq_powersave" ];
 
   # Bootloader
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.efi.efiSysMountPoint = systemSettings.bootMountPath;
+  # Use systemd-boot if uefi, default to grub otherwise
+  boot.loader.systemd-boot.enable = if (systemSettings.bootMode == "uefi") then true else false;
+  boot.loader.efi.canTouchEfiVariables = if (systemSettings.bootMode == "uefi") then true else false;
+  boot.loader.efi.efiSysMountPoint = systemSettings.bootMountPath; # does nothing if running bios rather than uefi
+  boot.loader.grub.enable = if (systemSettings.bootMode == "uefi") then false else true;
+  boot.loader.grub.device = systemSettings.grubDevice; # does nothing if running uefi rather than bios
 
   # Networking
   networking.hostName = systemSettings.hostname; # Define your hostname.
