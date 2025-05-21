@@ -27,7 +27,7 @@
       ../../system/security/automount.nix
       ../../system/style/stylix.nix
       ../../system/app/gamemode.nix
-      ../../system/app/steam.nix
+      #../../system/app/steam.nix
       ../../system/app/prismlauncher.nix
       ( import ../../system/security/sshd.nix {
             authorizedKeys = [ "" ];

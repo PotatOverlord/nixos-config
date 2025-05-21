@@ -4,5 +4,5 @@
   nixpkgs.config.allowUnfree = true;
   hardware.graphics.enable32Bit = true;
   programs.steam.enable = true;
-  #environment.systemPackages = [ pkgs.steam ];
+  environment.systemPackages = with pkgs; [ steam ];
 }

@@ -10,6 +10,7 @@
         timezone = "Europe/London";
         locale = "en_GB.UTF-8";
         bootMountPath = "/boot";
+        bootMode = "uefi";
         gpuType = "intel";
       };
 
