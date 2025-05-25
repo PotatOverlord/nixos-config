@@ -12,6 +12,8 @@
         bootMountPath = "/boot";
         bootMode = "uefi";
         gpuType = "intel";
+        root = "sda";
+        aux = "";
       };
 
       userSettings = rec {
@@ -52,6 +54,7 @@
           system = systemSettings.system;
           modules = [
             (./. + "/profiles" + ("/" + systemSettings.profile) + "/configuration.nix")
+            disko.nixosModules.disko
           ];
           specialArgs = {
             inherit pkgs;

@@ -1,7 +1,9 @@
-{
+{ systemSetttings }: let
+root = systemSettings.root;
+in {
   disko.devices = {
     disk = {
-      CHANGEME!!!!!!!!!! = {
+      root = {
         type = "gpt";
 	partitions = {
 	  ESP = {
