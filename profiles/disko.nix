@@ -1,9 +1,8 @@
-{ systemSetttings }: let
-root = systemSettings.root;
-in {
+{ systemSetttings }:
+{
   disko.devices = {
     disk = {
-      root = {
+      systemSettings.root = {
         type = "gpt";
 	partitions = {
 	  ESP = {
