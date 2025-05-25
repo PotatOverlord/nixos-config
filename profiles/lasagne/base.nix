@@ -2,7 +2,9 @@
 
 {
   imports =
-    [ ../../system/hardware-configuration.nix
+    [ ./hardware-configuration.nix
+      ./disko.nix
+      #"${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}"/module.nix #unsure if this is needed cause flake but better safe than sorry
       ../../system/hardware/time.nix # Network time sync
       ../../system/security/firewall.nix
       ../../system/security/doas.nix
@@ -68,6 +70,7 @@
     rsnapshot
     cryptsetup
     gocryptfs
+    sbctl
   ];
 
   programs.fuse.userAllowOther = true;
@@ -80,6 +83,6 @@
   programs.zsh.enable = true;
 
   # It is ok to leave this unchanged for compatibility purposes
-  system.stateVersion = "22.11";
+  system.stateVersion = "25.05";
 
 }

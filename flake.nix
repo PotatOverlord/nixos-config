@@ -1,17 +1,17 @@
 {
   description = "Every day I get closer to eating my computer and never having to look at an error ever again";
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, disko, ... }@inputs:
     let 
       systemSettings = {
         system = "x86_64-linux";
-        hostname = "cheese";
-        profile = "cheese";
+        hostname = "lasagne";
+        profile = "lasagne";
         timezone = "Europe/London";
         locale = "en_GB.UTF-8";
         bootMountPath = "/boot";
         bootMode = "uefi";
-        gpuType = "intel";
+        gpuType = "nvidia";
         root = "sda";
         aux = "";
       };
@@ -19,7 +19,7 @@
       userSettings = rec {
         username = "tater";
         name = "Potato Overlord";
-        dotfilesDir = "~/nixos-config/";
+        dotfilesDir = "/etc/nixos/nixos-config/";
         theme = "atelier-sulphurpool";
         browser = "qutebrowser";
         term = "alacritty";
@@ -44,7 +44,7 @@
         };
       };
 
-      pkgs = pkgs-unstable;
+      pkgs = nixpkgs.legacyPackages.${systemSettings.system};
       #lib = nixpkgs.lib;
     in
     {
@@ -104,7 +104,7 @@
 
     disko = {
       url = "github:nix-community/disko/latest";
-      inputs.nixpkgs.follows = "nixpkgs"
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     stylix.url = "github:danth/stylix";
