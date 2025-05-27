@@ -71,6 +71,8 @@
     cryptsetup
     gocryptfs
     sbctl
+    home-manager
+    hyfetch
   ];
 
   programs.fuse.userAllowOther = true;

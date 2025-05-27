@@ -19,7 +19,9 @@
       userSettings = rec {
         username = "tater";
         name = "Potato Overlord";
-        dotfilesDir = "/etc/nixos/nixos-config/";
+        gitName = "PotatOverlord";
+        gitEmail = "160378192+PotatOverlord@users.noreply.github.com";
+        dotfilesDir = "~/nixos-config/";
         theme = "atelier-sulphurpool";
         browser = "qutebrowser";
         term = "alacritty";
