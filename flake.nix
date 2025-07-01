@@ -1,7 +1,7 @@
 {
   description = "Every day I get closer to eating my computer and never having to look at an error ever again";
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager,  ... }@inputs:
     let 
       systemSettings = {
         system = "x86_64-linux";
@@ -44,17 +44,17 @@
         };
       };
 
+      #pkgs = nixpkgs.legacyPackages.${systemSettings.system};
       pkgs = pkgs-unstable;
-      #lib = nixpkgs.lib;
+      lib = nixpkgs.lib;
     in
     {
 
       nixosConfigurations = {
-        system =  nixpkgs.lib.nixosSystem {
+        system =  lib.nixosSystem {
           system = systemSettings.system;
           modules = [
             (./. + "/profiles" + ("/" + systemSettings.profile) + "/configuration.nix")
-            disko.nixosModules.disko
           ];
           specialArgs = {
             inherit pkgs;
@@ -68,9 +68,10 @@
       };
       homeConfigurations = {
         user =  home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
+            inherit pkgs;
           modules = [
             (./. + "/profiles/" + ("/" + systemSettings.profile) + "/home.nix")
+            #inputs.nixvim.homeManager.nixvim
           ];
           extraSpecialArgs = {
             inherit systemSettings;
@@ -78,15 +79,15 @@
             inherit inputs;
             inherit pkgs-stable;
             inherit pkgs-unstable;
-            inherit pkgs;
+            #inherit nixvim;
           };
         };
       };
     };
 
   inputs = {
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "nixpkgs/nixos-25.05";
 
     home-manager-unstable = {
       url = "github:nix-community/home-manager/master";
@@ -98,16 +99,21 @@
     };
 
     hyprland = {
-      url = "github:hyprwm/Hyprland";
+      url = "github:hyprwm/Hyprland/v0.49.0?submodules=true";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     disko = {
       url = "github:nix-community/disko/latest";
-      inputs.nixpkgs.follows = "nixpkgs"
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    stylix.url = "github:danth/stylix";
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    stylix.url = "github:nix-community/stylix";
 
   };
 }

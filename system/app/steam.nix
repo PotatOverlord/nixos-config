@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 {
-  nixpkgs.config.allowUnfree = true;
+  #nixpkgs.config.allowUnfree = true;
   hardware.graphics.enable32Bit = true;
   programs.steam.enable = true;
   environment.systemPackages = with pkgs; [ steam ];

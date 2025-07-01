@@ -31,6 +31,9 @@ in
     "SUPER, F, fullscreen"
     "SUPER, P, pin"
 
+    # opaque toggle
+    "SUPER, T, exec, hyprctl dispatch setprop active opaque toggle lock"
+
     # Screencap stuff TODO: put in app name to file
     # shift - slurp  ctrl - clipboard  alt - screenrec  SUPER - end screenrec
     ", Print, exec, grim $HOME/screenshots/$(date +''%y-%m-%d_%H-%M-%S'')_screenshot.png"
@@ -64,13 +67,19 @@ in
       9)
     );
     
-    bindm = [
+    bindm = [ # mouse stuff
     # Move/resize windows with mainMod + LMB/RMB and dragging
     "SUPER, mouse:272, movewindow"
     "SUPER, mouse:273, resizewindow"
     ];
 
-    bindel = [
+    binde = [ # repeats on hold
+    # zoom
+    "SUPER, equal , exec, hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor | awk '/^float.*/ {print $2 * 1.1}')"
+    "SUPER, minus , exec, hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor | awk '/^float.*/ {print $2 * 0.9}')"
+    ];
+
+    bindel = [ # above + works in lockscreem
     # Laptop multimedia keys for volume and LCD brightness
     ",XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
     ",XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
@@ -80,7 +89,7 @@ in
     ",XF86MonBrightnessDown, exec, brightnessctl s 10%-"
     ];
 
-    bindl = [
+    bindl = [ # works in lockscreen
     # Requires playerctl
     ",XF86AudioNext, exec, playerctl next"
     ",XF86AudioPause, exec, playerctl play-pause"
@@ -219,6 +228,9 @@ in
 
     # Fix some dragging issues with XWayland
     "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"
+
+    # terminal opacity
+    "opacity 0.85, class:(${userSettings.term}), title:(${userSettings.term})"
     ];
  
     # https://wiki.hyprland.org/Configuring/Variables/#misc
@@ -418,8 +430,7 @@ in
           };
         };
         tray = {
-          #"icon-size" = 21;
-          "spacing" = 10;
+          #"icon-size" = 21; "spacing" = 10;
         };
         "clock#time" = {
           "interval" = 1;

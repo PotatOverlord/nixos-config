@@ -1,9 +1,12 @@
 { pkgs, ... }:
-{
+let
+  durdraw = import ./durdraw.nix { inherit pkgs; };
+in {
   # Collection of useful CLI apps
   home.packages = with pkgs; [
+    durdraw
     # Command Line
-    hyfetch lolcat cowsay
+    neofetch hyfetch lolcat cowsay
     starfetch
     ani-cli
     btop

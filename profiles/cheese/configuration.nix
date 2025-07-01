@@ -29,10 +29,10 @@
       ../../system/app/gamemode.nix
       #../../system/app/steam.nix
       ../../system/app/prismlauncher.nix
+      #../../user/app/nvim/nvim.nix 
       ( import ../../system/security/sshd.nix {
             authorizedKeys = [ "" ];
             inherit userSettings; })
- 
     ];
 
   # Fix nix path
@@ -45,7 +45,6 @@
   nix.extraOptions = ''
     experimental-features = nix-command flakes
   '';
- 
 
   # wheel group gets trusted access to nix daemon
   nix.settings.trusted-users = [ "@wheel" ];

@@ -9,12 +9,10 @@
   programs.home-manager.enable = true;
 
   imports = [
-              ././../../user/hyprland/hyprland.nix # My window manager selected from flake
+              ../../user/hyprland/hyprland.nix # My window manager selected from flake
               ../../user/shell/sh.nix # My zsh and bash config
               ../../user/shell/cli-collection.nix # Useful CLI apps
-              #../../user/app/doom-emacs/doom.nix # My doom emacs config
               #../../user/app/nvim/nvim.nix 
-              #../../user/app/emacsng # Me experimenting with emacsng and a vanilla config
               ../../user/app/ranger/ranger.nix # My ranger file manager config
               ../../user/app/git.nix # My git config
               ../../user/app/keepass.nix # My password manager
@@ -24,9 +22,8 @@
               #../../user/app/games/steam.nix
               ../../user/app/games/emulators.nix
               ../../user/style/stylix.nix # Styling and themes for my apps
-              ../../user/lang/cc/cc.nix # C and C++ tools
-              #../../user/lang/godot/godot.nix # Game development
               ../../user/hardware/bluetooth.nix # Bluetooth
+              ( import ../../user/lang/lang.nix { langs = [ "c-sharp" "c" "yaml" ];})
             ];
 
   home.stateVersion = "24.11"; # Please read the comment before changing.
@@ -108,7 +105,6 @@
     krita
     pinta
     inkscape
-    (pkgs-stable.lollypop.override { youtubeSupport = false; })
     mpv
     yt-dlp
     libresprite
@@ -152,7 +148,6 @@
     texinfo
     libffi zlib
     nodePackages.ungit
-    ventoy
     kdePackages.kdenlive
 
     # Dunno what to categorise as 
