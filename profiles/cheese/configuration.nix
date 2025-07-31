@@ -20,6 +20,7 @@
       ../../system/security/gpg.nix
       ../../system/security/firewall.nix
       ../../system/security/openvpn.nix
+      ../../system/security/mullvad.nix
       ../../system/security/automount.nix
       ../../system/style/stylix.nix
       ../../system/app/gamemode.nix
