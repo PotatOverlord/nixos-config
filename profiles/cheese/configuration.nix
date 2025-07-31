@@ -4,10 +4,6 @@
 
 { pkgs, lib, systemSettings, userSettings, ... }:
 {
-
-  # I'm sorry Stallman-taichou
-  nixpkgs.config.allowUnfree = true;
-
   imports =
     [ ./hardware-configuration.nix
       ../../system/hardware/systemd.nix # systemd config
@@ -45,6 +41,8 @@
   nix.extraOptions = ''
     experimental-features = nix-command flakes
   '';
+
+  programs.darling.enable = false;
 
   # wheel group gets trusted access to nix daemon
   nix.settings.trusted-users = [ "@wheel" ];

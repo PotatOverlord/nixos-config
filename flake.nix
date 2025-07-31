@@ -33,6 +33,8 @@
         config = {
           allowUnfree = true;
           allowUnfreePredicate = (_: true);
+          allowBroken = false;
+          allowUnsupportedSystem = false;
         };
       };
 
@@ -41,23 +43,25 @@
         config = {
           allowUnfree = true;
           allowUnfreePredicate = (_: true);
+          allowBroken = false;
+          allowUnsupportedSystem = false;
         };
       };
 
       #pkgs = nixpkgs.legacyPackages.${systemSettings.system};
       pkgs = pkgs-unstable;
-      lib = nixpkgs.lib;
+      lib = inputs.nixpkgs.lib;
     in
     {
 
       nixosConfigurations = {
         system =  lib.nixosSystem {
+          inherit pkgs;
           system = systemSettings.system;
           modules = [
             (./. + "/profiles" + ("/" + systemSettings.profile) + "/configuration.nix")
           ];
           specialArgs = {
-            inherit pkgs;
             inherit pkgs-stable;
             inherit pkgs-unstable;
             inherit systemSettings;
@@ -99,6 +103,7 @@
     };
 
     hyprland = {
+      #url = "github:hyprwm/Hyprland/main";
       url = "github:hyprwm/Hyprland/v0.49.0?submodules=true";
       inputs.nixpkgs.follows = "nixpkgs";
     };

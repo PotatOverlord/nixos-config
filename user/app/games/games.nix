@@ -36,11 +36,6 @@ in
     pokefinder
   ]);
 
-  nixpkgs.config = {
-    allowUnfree = true;
-    allowUnfreePredicate = (_: true);
-  };
-
   # The following 2 declarations allow retroarch to be imported into gamehub
   # Set retroarch core directory to ~/.local/bin/libretro
   # and retroarch core info directory to ~/.local/share/libretro/info
