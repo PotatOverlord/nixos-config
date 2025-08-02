@@ -43,7 +43,6 @@
     experimental-features = nix-command flakes
   '';
 
-  programs.darling.enable = false;
 
   # wheel group gets trusted access to nix daemon
   nix.settings.trusted-users = [ "@wheel" ];

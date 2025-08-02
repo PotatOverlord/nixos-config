@@ -38,7 +38,7 @@
         };
       };
 
-      pkgs-unstable = import inputs.nixpkgs-unstable {
+      pkgs-unstable = import inputs.nixpkgs {
         system = systemSettings.system;
         config = {
           allowUnfree = true;
@@ -90,7 +90,7 @@
     };
 
   inputs = {
-    nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
+    nixpkgs.url = "nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "nixpkgs/nixos-25.05";
 
     home-manager-unstable = {
