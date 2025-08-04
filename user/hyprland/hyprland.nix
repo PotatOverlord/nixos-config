@@ -280,7 +280,7 @@ in
     killall
     polkit_gnome
     rofi
-    papirus-icon-theme
+    #papirus-icon-theme
     libva-utils
     #libinput-gestures
     gsettings-desktop-schemas
